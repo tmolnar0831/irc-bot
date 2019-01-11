@@ -18,13 +18,7 @@
 (irc:read-message-loop *connection*)
 
 ;;; Actions
-(defun send-msg-to-channel (conn chan msg)
-  (irc:privmsg conn chan msg))
-(send-msg-to-channel *connection* *channel* "Hello Room!")
-;(irc:op *connection* *channel* "st_iron")
-
 (defun msg-hook (message)
-  (irc:privmsg *connection* *channel* (format nil "Message: ~A" irc:arguments message)))
+  (format t "COMMAND: ~S~%" (last (cl-irc:arguments message))))
 
 (irc:add-hook *connection* 'irc:irc-privmsg-message 'msg-hook)
-;(irc:remove-hook *connection* 'irc:irc-privmsg-message 'msg-hook)
