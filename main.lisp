@@ -1,27 +1,29 @@
-;;;; Name: Test IRC bot
-;;;; Author: Tamas Molnar - tmolnar0831@gmail.com
+;;;; Name:    Photter IRC bot
+;;;; Author:  Tamas Molnar - tmolnar0831@gmail.com
+;;;; License: MIT
 
-;;; Load the external libraries
 (require :cl-irc)
+(require :split-sequence)
 
-;;; Global variables
+(defparameter *version* "0.0.1")
 (defvar *nick* "st_iron_test_bot")
 (defvar *server* "irc.freenode.net")
 (defvar *channel* "#iron-bottest-room")
 (defvar *connection* (irc:connect :nickname *nick*
                                   :server *server*))
 
-;;; Channel join
 (irc:join *connection* *channel*)
 
-;;; Read the message loop
-(irc:read-message-loop *connection*)
+(defun say-to-channel (say)
+  (irc:privmsg *connection* *channel* (format nil "~S" say)))
 
-;;; Actions
+(defun process-message-params (message)
+  (split-sequence:split-sequence #\Space message))
+
 (defun msg-hook (message)
-  (let ((channel (first (irc:arguments message)))
-        (arguments (last (irc:arguments message)))
-        (source (irc:source message)))
-    (irc:privmsg *connection* *channel* (format nil "~S" arguments))))
+  (let ((arguments (last (irc:arguments message))))
+    (say-to-channel (car arguments))))
 
 (irc:add-hook *connection* 'irc:irc-privmsg-message 'msg-hook)
+
+(irc:read-message-loop *connection*)
