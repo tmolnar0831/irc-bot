@@ -18,11 +18,11 @@
   (irc:privmsg *connection* *channel* (format nil "~S" say)))
 
 (defun process-message-params (message)
-  (split-sequence:split-sequence #\Space message))
+  (split-sequence:split-sequence #\Space (first message)))
 
 (defun msg-hook (message)
   (let ((arguments (last (irc:arguments message))))
-    (say-to-channel (car arguments))))
+    (say-to-channel (process-message-params arguments))))
 
 (irc:add-hook *connection* 'irc:irc-privmsg-message 'msg-hook)
 
