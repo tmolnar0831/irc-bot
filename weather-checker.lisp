@@ -3,12 +3,10 @@
 ;;;; License: MIT
 
 (defpackage :weather-checker
-  (:export :get-processed-output :weather-checker))
-
-(load (merge-pathnames "openweathermap.apikey"))
-
-(require :drakma)
-(require :cl-json)
+  (:use "COMMON-LISP")
+  (:export :get-processed-output :weather-checker)
+  (:export "*API-KEY*"))
+(in-package :weather-checker)
 
 (defvar *api-url* "https://api.openweathermap.org/data/2.5/weather"
   "The URL of the OpenWeatherMap API")
