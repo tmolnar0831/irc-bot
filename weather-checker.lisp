@@ -5,7 +5,9 @@
 (defpackage :weather-checker
   (:use "COMMON-LISP")
   (:export :get-processed-output :weather-checker)
-  (:export "*API-KEY*"))
+  (:export "*API-KEY*"
+           "RETURN-ANSWER"
+           "GET-PROCESSED-OUTPUT"))
 (in-package :weather-checker)
 
 (defvar *api-url* "https://api.openweathermap.org/data/2.5/weather"
