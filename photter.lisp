@@ -13,10 +13,9 @@
 (defvar *nick* "photter")
 (defvar *server* "irc.freenode.net")
 (defvar *channel* "#iron-bottest-room")
-(defvar *connection* (irc:connect :nickname *nick*
-                                  :server *server*))
+(defvar *connection*)
 
-(irc:join *connection* *channel*)
+
 
 (defparameter about-text
   (format nil "IRC BOT ~A, maintained by st_iron." *nick*))
@@ -46,6 +45,10 @@
           ((string-equal (issued-command (process-message-params arguments)) ".about")
            (say-to-channel about-text)))))
 
-(irc:add-hook *connection* 'irc:irc-privmsg-message 'msg-hook)
+(defun main ()
+  (setf *api-key* (load-api-key "openweathermap"))
+  (setf *connection* (irc:connect :nickname *nick* :server *server*))
+  (irc:join *connection* *channel*)
+  (irc:add-hook *connection* 'irc:irc-privmsg-message 'msg-hook)
+  (irc:read-message-loop *connection*))
 
-(irc:read-message-loop *connection*)
