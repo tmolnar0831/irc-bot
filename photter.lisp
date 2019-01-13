@@ -2,12 +2,12 @@
 ;;;; Author:  Tamas Molnar - tmolnar0831@gmail.com
 ;;;; License: MIT
 
-(defpackage :photter)
-
-(load (merge-pathnames "weather-checker"))
-
-(require :cl-irc)
-(require :split-sequence)
+(defpackage :photter
+  (:use "COMMON-LISP"
+        "WEATHER-CHECKER"
+        "API-KEY")
+  (:export "MAIN"))
+(in-package :photter)
 
 (defparameter *version* "0.0.1")
 (defvar *nick* "photter")
@@ -45,7 +45,7 @@
           ((string-equal (issued-command (process-message-params arguments)) ".about")
            (say-to-channel about-text)))))
 
-(defun main ()
+(defun main (&key ((:nick *nick*) *nick*))
   (setf *api-key* (load-api-key "openweathermap"))
   (setf *connection* (irc:connect :nickname *nick* :server *server*))
   (irc:join *connection* *channel*)
