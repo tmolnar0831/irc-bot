@@ -2,11 +2,13 @@
 ;;;; Author:  Tamas Molnar - tmolnar0831@gmail.com
 ;;;; License: MIT
 
+(load "/home/tmolnar/common-lisp/irc-bot/weather-checker.lisp")
+
 (require :cl-irc)
 (require :split-sequence)
 
 (defparameter *version* "0.0.1")
-(defvar *nick* "st_iron_test_bot")
+(defvar *nick* "photter")
 (defvar *server* "irc.freenode.net")
 (defvar *channel* "#iron-bottest-room")
 (defvar *connection* (irc:connect :nickname *nick*
@@ -15,7 +17,7 @@
 (irc:join *connection* *channel*)
 
 (defparameter help-text
-    "Available commands: ,bot")
+    "Available commands: .weather <city>,[<ISO 3166 country code>]")
 
 (defun say-to-channel (say)
   (irc:privmsg *connection* *channel* (format nil "~S" say)))
@@ -31,10 +33,11 @@
 
 (defun msg-hook (message)
   (let ((arguments (last (irc:arguments message))))
-    (if (string-equal (issued-command (process-message-params arguments)) ",help")
-        (say-to-channel help-text))
-    (if (string-equal (issued-command (process-message-params arguments)) ",bot")
-        (say-to-channel (argument-vector (process-message-params arguments))))))
+    (cond ((string-equal (issued-command (process-message-params arguments)) ".weather")
+           (get-processed-output (first (argument-vector (process-message-params arguments))))
+           (say-to-channel (return-answer *processed*)))
+          ((string-equal (issued-command (process-message-params arguments)) ".help")
+           (say-to-channel help-text)))))
 
 (irc:add-hook *connection* 'irc:irc-privmsg-message 'msg-hook)
 
