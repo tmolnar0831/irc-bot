@@ -24,7 +24,7 @@
     "Available commands: .weather <city>,[<ISO 3166 country code>]")
 
 (defun say-to-channel (say)
-  (irc:privmsg *connection* *channel* (format nil "~S" say)))
+  (irc:privmsg *connection* *channel* (princ-to-string say)))
 
 (defun process-message-params (message)
   (split-sequence:split-sequence #\Space (first message)))
@@ -37,12 +37,15 @@
 
 (defun msg-hook (message)
   (let ((arguments (last (irc:arguments message))))
-    (cond ((string-equal (issued-command (process-message-params arguments)) ".weather")
-           (say-to-channel (return-answer (get-processed-output (first (argument-vector (process-message-params arguments)))))))
-          ((string-equal (issued-command (process-message-params arguments)) ".help")
-           (say-to-channel help-text))
-          ((string-equal (issued-command (process-message-params arguments)) ".about")
-           (say-to-channel about-text)))))
+    (handler-case
+        (cond ((string-equal (issued-command (process-message-params arguments)) ".weather")
+               (say-to-channel (return-answer (get-processed-output (first (argument-vector (process-message-params arguments)))))))
+              ((string-equal (issued-command (process-message-params arguments)) ".help")
+               (say-to-channel help-text))
+              ((string-equal (issued-command (process-message-params arguments)) ".about")
+               (say-to-channel about-text)))
+      (error (err)
+        (say-to-channel (format nil "Sorry, I got an error: ~A" err))))))
 
 (defun main (&key ((:nick *nick*) *nick*))
   (setf *api-key* (load-api-key "openweathermap"))
