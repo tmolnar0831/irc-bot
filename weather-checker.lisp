@@ -27,9 +27,9 @@
 (defun build-query-url (url query-string city &optional country (key *api-key*) (unit "&units=metric"))
   "Returns the URL string for the API query"
   (cond (country
-         (format nil "~A~A~A,~A~A~A" url query-string city country key unit))
+         (format nil "~A~A~A,~A&APPID=~A~A" url query-string city country key unit))
         (t
-         (format nil "~A~A~A~A~A" url query-string city key unit))))
+         (format nil "~A~A~A&APPID=~A~A" url query-string city key unit))))
 
 ;; (build-query-url *api-url* *api-query-string* "god" "hu")
 
