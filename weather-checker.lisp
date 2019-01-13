@@ -2,7 +2,10 @@
 ;;;; Author:  Tamas Molnar - tmolnar0831@gmail.com
 ;;;; License: MIT
 
-(load "/home/tmolnar/common-lisp/weather-checker/api-key.lisp")
+(defpackage :weather-checker
+  (:export :get-processed-output :weather-checker))
+
+(load (merge-pathnames "openweathermap.apikey"))
 
 (require :drakma)
 (require :cl-json)
@@ -27,7 +30,7 @@
         (t
          (format nil "~A~A~A~A~A" url query-string city key unit))))
 
-(build-query-url *api-url* *api-query-string* "god" "hu")
+;(build-query-url *api-url* *api-query-string* "god" "hu")
 
 (defun run-query (city &optional country)
   "Query the URL and return a vector object"

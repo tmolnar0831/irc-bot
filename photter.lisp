@@ -2,7 +2,9 @@
 ;;;; Author:  Tamas Molnar - tmolnar0831@gmail.com
 ;;;; License: MIT
 
-(load "/home/tmolnar/common-lisp/irc-bot/weather-checker.lisp")
+(defpackage :photter)
+
+(load (merge-pathnames "weather-checker"))
 
 (require :cl-irc)
 (require :split-sequence)
@@ -15,6 +17,9 @@
                                   :server *server*))
 
 (irc:join *connection* *channel*)
+
+(defparameter about-text
+  (format nil "IRC BOT ~A, maintained by st_iron." *nick*))
 
 (defparameter help-text
     "Available commands: .weather <city>,[<ISO 3166 country code>]")
@@ -37,7 +42,9 @@
            (get-processed-output (first (argument-vector (process-message-params arguments))))
            (say-to-channel (return-answer *processed*)))
           ((string-equal (issued-command (process-message-params arguments)) ".help")
-           (say-to-channel help-text)))))
+           (say-to-channel help-text))
+          ((string-equal (issued-command (process-message-params arguments)) ".about")
+           (say-to-channel about-text)))))
 
 (irc:add-hook *connection* 'irc:irc-privmsg-message 'msg-hook)
 
