@@ -2,6 +2,14 @@
 ;;;; Author:  Tamas Molnar - tmolnar0831@gmail.com
 ;;;; License: MIT
 
+(defpackage :weather-checker
+  (:export :get-processed-output :weather-checker))
+
+(load (merge-pathnames "openweathermap.apikey"))
+
+(require :drakma)
+(require :cl-json)
+
 (defvar *api-url* "https://api.openweathermap.org/data/2.5/weather"
   "The URL of the OpenWeatherMap API")
 (defvar *api-query-string* "?q="

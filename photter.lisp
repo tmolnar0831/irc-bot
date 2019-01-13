@@ -2,6 +2,12 @@
 ;;;; Author:  Tamas Molnar - tmolnar0831@gmail.com
 ;;;; License: MIT
 
+(defpackage :photter)
+
+(load (merge-pathnames "weather-checker"))
+
+(require :cl-irc)
+(require :split-sequence)
 
 (defparameter *version* "0.0.1")
 (defvar *nick* "photter")
@@ -10,6 +16,9 @@
 (defvar *connection*)
 
 
+
+(defparameter about-text
+  (format nil "IRC BOT ~A, maintained by st_iron." *nick*))
 
 (defparameter help-text
     "Available commands: .weather <city>,[<ISO 3166 country code>]")
@@ -32,7 +41,9 @@
            (get-processed-output (first (argument-vector (process-message-params arguments))))
            (say-to-channel (return-answer *processed*)))
           ((string-equal (issued-command (process-message-params arguments)) ".help")
-           (say-to-channel help-text)))))
+           (say-to-channel help-text))
+          ((string-equal (issued-command (process-message-params arguments)) ".about")
+           (say-to-channel about-text)))))
 
 (defun main ()
   (setf *api-key* (load-api-key "openweathermap"))
