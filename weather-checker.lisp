@@ -4,10 +4,12 @@
 
 (defpackage :weather-checker
   (:use "COMMON-LISP")
-  (:export :get-processed-output :weather-checker)
   (:export "*API-KEY*"
            "RETURN-ANSWER"
-           "GET-PROCESSED-OUTPUT"))
+           "GET-PROCESSED-OUTPUT"
+           "WEATHER-ERROR"
+           "WEATHER-ERROR-CODE"
+           "WEATHER-ERROR-MESSAGE"))
 (in-package :weather-checker)
 
 (defvar *api-url* "https://api.openweathermap.org/data/2.5/weather"
@@ -44,11 +46,25 @@
   (with-input-from-string (s answer)
     (json:decode-json s)))
 
+(define-condition weather-error (error)
+  ((code :initarg :code :reader weather-error-code)
+   (message :initarg :message :reader weather-error-message))
+  (:report (lambda (condition stream)
+             (write-string (weather-error-message condition) stream))))
+
+(defun aget (alist key) (cdr (assoc key alist)))
+
 (defun get-processed-output (city &optional country)
-  (cond (country
-         (process-answer (run-query city country)))
-        (t
-         (process-answer (run-query city)))))
+  (let ((answer (cond (country
+                       (process-answer (run-query city country)))
+                      (t
+                       (process-answer (run-query city))))))
+
+    (if (assoc :cod answer)
+        (error 'weather-error
+               :code (aget answer :cod)
+               :message (aget answer :message))
+        answer)))
 
 ;;(get-processed-output "god" "hu")
 
