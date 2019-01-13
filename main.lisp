@@ -14,15 +14,27 @@
 
 (irc:join *connection* *channel*)
 
+(defparameter help-text
+    "Available commands: ,bot")
+
 (defun say-to-channel (say)
   (irc:privmsg *connection* *channel* (format nil "~S" say)))
 
 (defun process-message-params (message)
   (split-sequence:split-sequence #\Space (first message)))
 
+(defun issued-command (message)
+  (first message))
+
+(defun argument-vector (message)
+  (rest message))
+
 (defun msg-hook (message)
   (let ((arguments (last (irc:arguments message))))
-    (say-to-channel (process-message-params arguments))))
+    (if (string-equal (issued-command (process-message-params arguments)) ",help")
+        (say-to-channel help-text))
+    (if (string-equal (issued-command (process-message-params arguments)) ",bot")
+        (say-to-channel (argument-vector (process-message-params arguments))))))
 
 (irc:add-hook *connection* 'irc:irc-privmsg-message 'msg-hook)
 
