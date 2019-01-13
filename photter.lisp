@@ -2,19 +2,14 @@
 ;;;; Author:  Tamas Molnar - tmolnar0831@gmail.com
 ;;;; License: MIT
 
-(load "/home/tmolnar/common-lisp/irc-bot/weather-checker.lisp")
-
-(require :cl-irc)
-(require :split-sequence)
 
 (defparameter *version* "0.0.1")
 (defvar *nick* "photter")
 (defvar *server* "irc.freenode.net")
 (defvar *channel* "#iron-bottest-room")
-(defvar *connection* (irc:connect :nickname *nick*
-                                  :server *server*))
+(defvar *connection*)
 
-(irc:join *connection* *channel*)
+
 
 (defparameter help-text
     "Available commands: .weather <city>,[<ISO 3166 country code>]")
@@ -39,6 +34,10 @@
           ((string-equal (issued-command (process-message-params arguments)) ".help")
            (say-to-channel help-text)))))
 
-(irc:add-hook *connection* 'irc:irc-privmsg-message 'msg-hook)
+(defun main ()
+  (setf *api-key* (load-api-key "openweathermap"))
+  (setf *connection* (irc:connect :nickname *nick* :server *server*))
+  (irc:join *connection* *channel*)
+  (irc:add-hook *connection* 'irc:irc-privmsg-message 'msg-hook)
+  (irc:read-message-loop *connection*))
 
-(irc:read-message-loop *connection*)

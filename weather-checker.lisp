@@ -2,11 +2,6 @@
 ;;;; Author:  Tamas Molnar - tmolnar0831@gmail.com
 ;;;; License: MIT
 
-(load "/home/tmolnar/common-lisp/weather-checker/api-key.lisp")
-
-(require :drakma)
-(require :cl-json)
-
 (defvar *api-url* "https://api.openweathermap.org/data/2.5/weather"
   "The URL of the OpenWeatherMap API")
 (defvar *api-query-string* "?q="
@@ -19,6 +14,7 @@
   "The metrics for the API response")
 (defvar *processed* nil
   "The processed answer data")
+(defvar *api-key* nil)
 
 (defun build-query-url (url query-string city &optional country (key *api-key*) (unit "&units=metric"))
   "Returns the URL string for the API query"
@@ -27,7 +23,7 @@
         (t
          (format nil "~A~A~A~A~A" url query-string city key unit))))
 
-(build-query-url *api-url* *api-query-string* "god" "hu")
+;; (build-query-url *api-url* *api-query-string* "god" "hu")
 
 (defun run-query (city &optional country)
   "Query the URL and return a vector object"
@@ -48,7 +44,7 @@
         (t
          (setq *processed* (process-answer (run-query city))))))
 
-;(get-processed-output "god" "hu")
+;;(get-processed-output "god" "hu")
 
 (defun return-city (data)
   "Return the city name"
@@ -79,4 +75,5 @@
           (return-pressure data)
           (return-humidity data)))
 
-(return-answer *processed*)
+;; (return-answer *processed*)
+
