@@ -1,5 +1,0 @@
-;;;; Name:    Weather Checker
-;;;; Author:  Tamas Molnar - tmolnar0831@gmail.com
-;;;; License: MIT
-
-(defparameter *api-key* "&APPID=6e8425c68f739ab42ff54abc7c1e8328")
