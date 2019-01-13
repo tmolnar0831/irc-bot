@@ -5,7 +5,9 @@
 (defpackage :weather-checker
   (:use "COMMON-LISP")
   (:export :get-processed-output :weather-checker)
-  (:export "*API-KEY*"))
+  (:export "*API-KEY*"
+           "RETURN-ANSWER"
+           "GET-PROCESSED-OUTPUT"))
 (in-package :weather-checker)
 
 (defvar *api-url* "https://api.openweathermap.org/data/2.5/weather"
@@ -18,8 +20,6 @@
   "The country code in ISO 3166 format")
 (defvar *api-units* nil
   "The metrics for the API response")
-(defvar *processed* nil
-  "The processed answer data")
 (defvar *api-key* nil)
 
 (defun build-query-url (url query-string city &optional country (key *api-key*) (unit "&units=metric"))
@@ -46,9 +46,9 @@
 
 (defun get-processed-output (city &optional country)
   (cond (country
-         (setq *processed* (process-answer (run-query city country))))
+         (process-answer (run-query city country)))
         (t
-         (setq *processed* (process-answer (run-query city))))))
+         (process-answer (run-query city)))))
 
 ;;(get-processed-output "god" "hu")
 
@@ -81,5 +81,5 @@
           (return-pressure data)
           (return-humidity data)))
 
-;; (return-answer *processed*)
+;; (return-answer (get-processed-output "god" "hu"))
 

@@ -38,8 +38,7 @@
 (defun msg-hook (message)
   (let ((arguments (last (irc:arguments message))))
     (cond ((string-equal (issued-command (process-message-params arguments)) ".weather")
-           (get-processed-output (first (argument-vector (process-message-params arguments))))
-           (say-to-channel (return-answer *processed*)))
+           (say-to-channel (return-answer (get-processed-output (first (argument-vector (process-message-params arguments)))))))
           ((string-equal (issued-command (process-message-params arguments)) ".help")
            (say-to-channel help-text))
           ((string-equal (issued-command (process-message-params arguments)) ".about")
@@ -48,7 +47,9 @@
 (defun main (&key ((:nick *nick*) *nick*))
   (setf *api-key* (load-api-key "openweathermap"))
   (setf *connection* (irc:connect :nickname *nick* :server *server*))
-  (irc:join *connection* *channel*)
-  (irc:add-hook *connection* 'irc:irc-privmsg-message 'msg-hook)
-  (irc:read-message-loop *connection*))
+  (unwind-protect (progn
+                    (irc:join *connection* *channel*)
+                    (irc:add-hook *connection* 'irc:irc-privmsg-message 'msg-hook)
+                    (irc:read-message-loop *connection*))
+    (irc:quit *connection*)))
 
