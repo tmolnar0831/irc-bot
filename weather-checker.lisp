@@ -61,10 +61,10 @@
                        (process-answer (run-query city))))))
 
     (if (eql (assoc :cod answer) 200)
+        answer
         (error 'weather-error
                :code (aget answer :cod)
-               :message (aget answer :message))
-        answer)))
+               :message (aget answer :message)))))
 
 ;;(get-processed-output "god" "hu")
 
