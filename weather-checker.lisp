@@ -90,7 +90,7 @@
 
 (defun return-answer (data)
   "Return a string as answer"
-  (format nil "In ~A the temperature is ~S dregrees Celsius, wind: ~Skm/h, pressure: ~ShPa, humidity: ~S%"
+  (format nil "~A: Temperature: ~S dregrees Celsius, wind: ~Skm/h, pressure: ~ShPa, humidity: ~S%"
           (return-city data)
           (return-temperature data)
           (return-wind data)
@@ -98,4 +98,3 @@
           (return-humidity data)))
 
 ;; (return-answer (get-processed-output "god" "hu"))
-
