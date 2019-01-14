@@ -90,11 +90,13 @@
 
 (defun return-answer (data)
   "Return a string as answer"
-  (format nil "~A: Temperature: ~S dregrees Celsius, wind: ~Skm/h, pressure: ~ShPa, humidity: ~S%"
-          (return-city data)
-          (return-temperature data)
-          (return-wind data)
-          (return-pressure data)
-          (return-humidity data)))
+  (if (not (return-city data))
+      (format nil "No such location! Please check your request!")
+      (format nil "~A: Temperature: ~S dregrees Celsius, wind: ~Skm/h, pressure: ~ShPa, humidity: ~S%"
+              (return-city data)
+              (return-temperature data)
+              (return-wind data)
+              (return-pressure data)
+              (return-humidity data))))
 
 ;; (return-answer (get-processed-output "god" "hu"))
