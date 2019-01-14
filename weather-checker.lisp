@@ -60,7 +60,7 @@
                       (t
                        (process-answer (run-query city))))))
 
-    (if (assoc :cod answer)
+    (if (eql (assoc :cod answer) 200)
         (error 'weather-error
                :code (aget answer :cod)
                :message (aget answer :message))
