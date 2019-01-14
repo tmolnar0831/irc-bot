@@ -4,9 +4,27 @@ Photter is az an IRC BOT written in Common Lisp for easy operations and convenie
 
 ## BOT commands
 
+### Checking the current weather for a location
+
+`.weather <city>[,<country>]`
+
+### Getting help
+
+`.help`
+
+### BOT info
+
+`.about`
+
 ## Installation
 
+With `quicklisp` the installation is
+
+`(ql:quickload :photter)`
+
 ## Configuration
+
+`(photter:main :nick "<botname>")`
 
 ## License
 
