@@ -15,8 +15,6 @@
 (defvar *channel* "#iron-bottest-room")
 (defvar *connection*)
 
-
-
 (defparameter about-text
   (format nil "IRC BOT ~A, maintained by st_iron." *nick*))
 
