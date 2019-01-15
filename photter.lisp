@@ -24,7 +24,7 @@
 (defun say-to-channel (say)
   (irc:privmsg *connection* *channel* (princ-to-string say)))
 
-(defun send-answer (answer destination)
+(defun say-to-private (answer destination)
   (irc:privmsg *connection* destination (princ-to-string answer)))
 
 (defun process-message-params (message)
@@ -37,16 +37,20 @@
   (rest message))
 
 (defun msg-hook (message)
-  (let ((msg-src (irc:source message))
-        (msg-dst (first (irc:arguments message)))
-        (arguments (last (irc:arguments message))))
+  (let ((msg-src (irc:source message))              ;who sent the message
+        (msg-dst (first (irc:arguments message)))   ;where the message arrived to
+        (arguments (last (irc:arguments message)))) ;the rest of the message
     (handler-case
-        (cond ((string-equal (issued-command (process-message-params arguments)) ".weather")
-               (say-to-channel (format-answer-string (get-processed-output (first (argument-vector (process-message-params arguments)))))))
-              ((string-equal (issued-command (process-message-params arguments)) ".help")
-               (say-to-channel help-text))
-              ((string-equal (issued-command (process-message-params arguments)) ".about")
-               (say-to-channel about-text)))
+        (cond
+          ((string-equal (issued-command (process-message-params arguments)) ".weather")
+           (if (string-equal msg-dst *nick*)
+               (say-to-private (format-answer-string
+                                (get-processed-output (first (argument-vector (process-message-params arguments))))) msg-src)
+               (say-to-channel (format-answer-string (get-processed-output (first (argument-vector (process-message-params arguments))))))))
+          ((string-equal (issued-command (process-message-params arguments)) ".help")
+           (say-to-channel help-text))
+          ((string-equal (issued-command (process-message-params arguments)) ".about")
+           (say-to-channel about-text)))
       (error (err)
         (say-to-channel (format nil "Sorry, I got an error: ~A" err))))))
 
