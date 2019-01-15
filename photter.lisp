@@ -24,6 +24,9 @@
 (defun say-to-channel (say)
   (irc:privmsg *connection* *channel* (princ-to-string say)))
 
+(defun send-answer (answer destination)
+  (irc:privmsg *connection* destination (princ-to-string answer)))
+
 (defun process-message-params (message)
   (split-sequence:split-sequence #\Space (first message)))
 
@@ -34,7 +37,9 @@
   (rest message))
 
 (defun msg-hook (message)
-  (let ((arguments (last (irc:arguments message))))
+  (let ((msg-src (irc:source message))
+        (msg-dst (first (irc:arguments message)))
+        (arguments (last (irc:arguments message))))
     (handler-case
         (cond ((string-equal (issued-command (process-message-params arguments)) ".weather")
                (say-to-channel (format-answer-string (get-processed-output (first (argument-vector (process-message-params arguments)))))))
