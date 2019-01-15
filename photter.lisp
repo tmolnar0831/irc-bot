@@ -37,7 +37,7 @@
   (let ((arguments (last (irc:arguments message))))
     (handler-case
         (cond ((string-equal (issued-command (process-message-params arguments)) ".weather")
-               (say-to-channel (return-answer (get-processed-output (first (argument-vector (process-message-params arguments)))))))
+               (say-to-channel (format-answer-string (get-processed-output (first (argument-vector (process-message-params arguments)))))))
               ((string-equal (issued-command (process-message-params arguments)) ".help")
                (say-to-channel help-text))
               ((string-equal (issued-command (process-message-params arguments)) ".about")

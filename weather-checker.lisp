@@ -5,7 +5,7 @@
 (defpackage :weather-checker
   (:use "COMMON-LISP")
   (:export "*API-KEY*"
-           "RETURN-ANSWER"
+           "FORMAT-ANSWER-STRING"
            "GET-PROCESSED-OUTPUT"
            "WEATHER-ERROR"
            "WEATHER-ERROR-CODE"
@@ -64,32 +64,37 @@
                :code (aget answer :cod)
                :message (aget answer :message)))))
 
-(defun return-city (data)
+(defun weather-city (data)
   "Return the city name"
   (rest (assoc :name data)))
 
-(defun return-temperature (data)
+(defun weather-temperature (data)
   "Return the temperature in Celsius"
   (rest (nth 1 (assoc :main data))))
 
-(defun return-pressure (data)
+(defun weather-pressure (data)
   "Return the pressure in hPa"
   (rest (nth 2 (assoc :main data))))
 
-(defun return-humidity (data)
+(defun weather-humidity (data)
   "Return the humidity in percentage"
   (rest (nth 3 (assoc :main data))))
 
-(defun return-wind (data)
+(defun weather-wind (data)
   "Return the wind in km/h"
   (rest (nth 1 (assoc :wind data))))
 
-(defun return-answer (data)
-  "Return a string as answer"
-  (format nil "~A: Temperature: ~S dregrees Celsius, wind: ~Skm/h, pressure: ~ShPa, humidity: ~S%"
-          (return-city data)
-          (return-temperature data)
-          (return-wind data)
-          (return-pressure data)
-          (return-humidity data)))
+(defun weather-country (data)
+  "Return the country code"
+  (cdr (nth 3 (cdr (assoc :sys data)))))
+
+(defun format-answer-string (data)
+  "Return a formatted string as answer"
+  (format nil "[~A / ~A]: Temperature: ~A dregrees Celsius, wind: ~Akm/h, pressure: ~AhPa, humidity: ~A%"
+          (weather-city data)
+          (weather-country data)
+          (weather-temperature data)
+          (weather-wind data)
+          (weather-pressure data)
+          (weather-humidity data)))
 
