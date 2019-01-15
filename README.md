@@ -6,7 +6,9 @@ Photter is az an IRC BOT written in Common Lisp for easy operations and convenie
 
 ### Checking the current weather for a location
 
-`.weather <city>[,<country>]`
+The country name only works with the two-digit country codes.
+
+`.weather <city> [<ISO 3166 two-digit country code>]`
 
 ### Getting help
 
@@ -22,9 +24,7 @@ With `quicklisp` the installation is
 
 `(ql:quickload :photter)`
 
-## Configuration
-
-`(photter:main :nick "<botname>")`
+`(photter:main :nick "<botname>" :channel "#<channel-to-join-to>")`
 
 ## License
 

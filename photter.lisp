@@ -16,10 +16,10 @@
 (defvar *connection*)
 
 (defparameter about-text
-  (format nil "IRC BOT ~A, maintained by st_iron." *nick*))
+  (format nil "I am a Common Lisp IRC BOT maintained by st_iron. Use .help for command info."))
 
 (defparameter help-text
-    "Available commands: .weather <city>,[<ISO 3166 country code>]")
+    "Available commands: .weather <city> [<ISO 3166 two-digit country code>]")
 
 (defun say-to-channel (say)
   (irc:privmsg *connection* *channel* (princ-to-string say)))
