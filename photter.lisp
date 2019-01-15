@@ -31,23 +31,20 @@
 (defun process-message-params (message)
   (split-sequence:split-sequence #\Space (first message)))
 
-(defun issued-command (message)
-  (first message))
-
 (defun msg-hook (message)
   (let ((msg-src (irc:source message))              ;who sent the message
         (msg-dst (first (irc:arguments message)))   ;where the message arrived to
         (arguments (last (irc:arguments message)))) ;the rest of the message
     (handler-case
         (cond
-          ((string-equal (issued-command (process-message-params arguments)) ".weather")
+          ((string-equal (first (process-message-params arguments)) ".weather")
            (if (string-equal msg-dst *nick*)
                (say-to-private (format-answer-string
                                 (get-processed-output (first (rest (process-message-params arguments))))) msg-src)
                (say-to-channel (format-answer-string (get-processed-output (first (rest (process-message-params arguments))))))))
-          ((string-equal (issued-command (process-message-params arguments)) ".help")
+          ((string-equal (first (process-message-params arguments)) ".help")
            (say-to-channel help-text))
-          ((string-equal (issued-command (process-message-params arguments)) ".about")
+          ((string-equal (first (process-message-params arguments)) ".about")
            (say-to-channel about-text)))
       (error (err)
         (say-to-channel (format nil "Sorry, I got an error: ~A" err))))))
