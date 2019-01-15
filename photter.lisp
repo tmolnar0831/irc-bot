@@ -1,11 +1,12 @@
-;;;; Name:    Photter IRC bot
+;;;; Name:    Photter IRC BOT
 ;;;; Author:  Tamas Molnar - tmolnar0831@gmail.com
 ;;;; License: MIT
 
 (defpackage :photter
   (:use "COMMON-LISP"
         "WEATHER-CHECKER"
-        "API-KEY")
+        "API-KEY"
+        "WEB-ECHO")
   (:export "MAIN"))
 (in-package :photter)
 
