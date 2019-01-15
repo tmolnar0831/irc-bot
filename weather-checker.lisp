@@ -31,8 +31,6 @@
         (t
          (format nil "~A~A~A&APPID=~A~A" url query-string city key unit))))
 
-;; (build-query-url *api-url* *api-query-string* "god" "hu")
-
 (defun run-query (city &optional country)
   "Query the URL and return a vector object"
   (cond (country
@@ -66,8 +64,6 @@
                :code (aget answer :cod)
                :message (aget answer :message)))))
 
-;;(get-processed-output "god" "hu")
-
 (defun return-city (data)
   "Return the city name"
   (rest (assoc :name data)))
@@ -97,4 +93,3 @@
           (return-pressure data)
           (return-humidity data)))
 
-;; (return-answer (get-processed-output "god" "hu"))
