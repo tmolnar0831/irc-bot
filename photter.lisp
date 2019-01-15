@@ -34,9 +34,6 @@
 (defun issued-command (message)
   (first message))
 
-(defun argument-vector (message)
-  (rest message))
-
 (defun msg-hook (message)
   (let ((msg-src (irc:source message))              ;who sent the message
         (msg-dst (first (irc:arguments message)))   ;where the message arrived to
@@ -46,8 +43,8 @@
           ((string-equal (issued-command (process-message-params arguments)) ".weather")
            (if (string-equal msg-dst *nick*)
                (say-to-private (format-answer-string
-                                (get-processed-output (first (argument-vector (process-message-params arguments))))) msg-src)
-               (say-to-channel (format-answer-string (get-processed-output (first (argument-vector (process-message-params arguments))))))))
+                                (get-processed-output (first (rest (process-message-params arguments))))) msg-src)
+               (say-to-channel (format-answer-string (get-processed-output (first (rest (process-message-params arguments))))))))
           ((string-equal (issued-command (process-message-params arguments)) ".help")
            (say-to-channel help-text))
           ((string-equal (issued-command (process-message-params arguments)) ".about")
