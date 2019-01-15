@@ -45,7 +45,7 @@
       (error (err)
         (say-to-channel (format nil "Sorry, I got an error: ~A" err))))))
 
-(defun main (&key ((:nick *nick*) *nick*))
+(defun main (&key ((:nick *nick*) *nick*) ((:channel *channel*) *channel*))
   (setf *api-key* (load-api-key "openweathermap"))
   (setf *connection* (irc:connect :nickname *nick* :server *server*))
   (unwind-protect (progn
