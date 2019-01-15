@@ -90,7 +90,7 @@
 
 (defun format-answer-string (data)
   "Return a formatted string as answer"
-  (format nil "[~A / ~A]: Temperature: ~A dregrees Celsius, wind: ~Akm/h, pressure: ~AhPa, humidity: ~A%"
+  (format nil "~A ~A, ~A°C, wind ~Akm/h, pressure ~AhPa, humidity ~A%"
           (weather-city data)
           (weather-country data)
           (weather-temperature data)
