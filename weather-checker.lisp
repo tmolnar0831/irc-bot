@@ -23,7 +23,7 @@
 (defvar *api-key* nil
   "API Key")
 
-(defun current-weather-information (location) ;gets eg. '("smiths" "falls" "ontario")
+(defun current-weather-information (location)
   "Return the current weather information"
   (let* ((api-ready-location (weather-location location))
          (api-query-uri (weather-query-uri *api-uri* api-ready-location *api-key*))
@@ -34,12 +34,14 @@
         (error 'weather-error
                :code (aget weather-lisp-information :cod)
                :message (aget weather-lisp-information :message)))))
-  
+
 (defun weather-location (location)
   "Return the string representation of the location"
-  (let ((country (car (reverse location)))
-        (city (reverse (cdr (reverse location)))))
-    (format nil "~{~A~^%20~},~A" city country)))
+  (if (> (length location) 1)
+      (let ((country (car (reverse location)))
+            (city (reverse (cdr (reverse location)))))
+        (format nil "~{~A~^%20~},~A" city country))
+      (format nil "~{~A~^%20~},~A" location nil)))
 
 (defun weather-query-uri (url location &optional (key *api-key*) (unit "&units=metric"))
   "Return the URI string for the API query"
