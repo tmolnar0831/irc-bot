@@ -5,42 +5,43 @@
 (defpackage :weather-checker
   (:use "COMMON-LISP")
   (:export "*API-KEY*"
-           "FORMAT-ANSWER-STRING"
-           "GET-PROCESSED-OUTPUT"
+           "FORMATTED-WEATHER-DATA"
+           "WEATHER-LOCATION"
+           "WEATHER-DATA"
            "WEATHER-ERROR"
            "WEATHER-ERROR-CODE"
            "WEATHER-ERROR-MESSAGE"))
+
 (in-package :weather-checker)
 
 (defvar *api-url* "https://api.openweathermap.org/data/2.5/weather"
-  "The URL of the OpenWeatherMap API")
-(defvar *api-query-string* "?q="
-  "The query string for the API requests")
+  "URL of the OpenWeatherMap API")
 (defvar *api-city* nil
-  "The city for the query")
+  "City for the query")
 (defvar *api-country* nil
-  "The country code in ISO 3166 format")
+  "Country code in ISO 3166 format")
 (defvar *api-units* nil
-  "The metrics for the API response")
-(defvar *api-key* nil)
+  "Metrics for the API response")
+(defvar *api-key* nil
+  "API Key")
 
-(defun build-query-url (url query-string city &optional country (key *api-key*) (unit "&units=metric"))
-  "Returns the URL string for the API query"
-  (cond (country
-         (format nil "~A~A~A,~A&APPID=~A~A" url query-string city country key unit))
-        (t
-         (format nil "~A~A~A&APPID=~A~A" url query-string city key unit))))
+(defun weather-location (location)
+  "Return the string representation of the location"
+  (let ((country (car (reverse location)))
+        (city (reverse (cdr (reverse location)))))
+    (format nil "~{~A~^ ~},~A" city country)))
 
-(defun run-query (city &optional country)
-  "Query the URL and return a vector object"
-  (cond (country
-         (babel:octets-to-string
-          (drakma:http-request (build-query-url *api-url* *api-query-string* city country))))
-        (t
-         (babel:octets-to-string
-          (drakma:http-request (build-query-url *api-url* *api-query-string* city))))))
+(defun weather-query-url (url location &optional (key *api-key*) (unit "&units=metric"))
+  "Return the URI string for the API query"
+  (format nil "~A?q=~A&APPID=~A~A" url location key unit))
 
-(defun process-answer (answer)
+(defun weather-query (location)
+  "HTTP Request the URI and return an object containing the JSON data"
+  (babel:octets-to-string
+   (drakma:http-request (weather-query-url *api-url* location))))
+
+(defun weather-json-to-answer (answer)
+  "Turn JSON to Lisp lists"
   (with-input-from-string (s answer)
     (json:decode-json s)))
 
@@ -52,12 +53,9 @@
 
 (defun aget (alist key) (cdr (assoc key alist)))
 
-(defun get-processed-output (city &optional country)
-  (let ((answer (cond (country
-                       (process-answer (run-query city country)))
-                      (t
-                       (process-answer (run-query city))))))
-
+(defun weather-data (location)
+  "Run the HTTP request, return Lisp lists"
+  (let ((answer (weather-json-to-answer (weather-query location))))
     (if (eql (cdr (assoc :cod answer)) 200)
         answer
         (error 'weather-error
@@ -88,7 +86,7 @@
   "Return the country code"
   (cdr (nth 3 (cdr (assoc :sys data)))))
 
-(defun format-answer-string (data)
+(defun formatted-weather-data (data)
   "Return a formatted string as answer"
   (format nil "~A ~A, ~A°C, wind ~Akm/h, pressure ~AhPa, humidity ~A%"
           (weather-city data)

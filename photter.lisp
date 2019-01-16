@@ -37,13 +37,18 @@
         (arguments (last (irc:arguments message)))) ;the rest of the message
     (handler-case
         (cond
-          ((string-equal (first (process-message-params arguments)) ".weather")
+          ;; In case of .weather command
+          ((string-equal (car (process-message-params arguments)) ".weather")
+           ;; If the message is sent to the bot
            (if (string-equal msg-dst *nick*)
-               (say-to-private (format-answer-string
-                                (get-processed-output (first (rest (process-message-params arguments))))) msg-src)
-               (say-to-channel (format-answer-string (get-processed-output (first (rest (process-message-params arguments))))))))
+               ;; Send the answer in private message
+               (say-to-private (formatted-weather-data (weather-data (weather-location (cdr (process-message-params arguments))))) msg-src)
+               ;; Else message to the channel
+               (say-to-channel (formatted-weather-data (weather-data (first (rest (process-message-params arguments))))))))
+          ;; Show the help text with .help
           ((string-equal (first (process-message-params arguments)) ".help")
            (say-to-channel help-text))
+          ;; Show the about text with .about
           ((string-equal (first (process-message-params arguments)) ".about")
            (say-to-channel about-text)))
       (error (err)
