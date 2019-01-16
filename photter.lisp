@@ -42,7 +42,7 @@
            ;; If the message is sent to the bot
            (if (string-equal msg-dst *nick*)
                ;; Send the answer in private message
-               (say-to-private (formatted-weather-data (weather-data (weather-location (cdr (process-message-params arguments))))) msg-src)
+               (say-to-private (current-weather-information (cdr (process-message-params arguments))) msg-src)
                ;; Else message to the channel
                (say-to-channel (formatted-weather-data (weather-data (first (rest (process-message-params arguments))))))))
           ;; Show the help text with .help
