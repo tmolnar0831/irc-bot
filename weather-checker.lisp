@@ -29,7 +29,8 @@
          (weather-json-information (babel:octets-to-string (drakma:http-request *api-uri*
                                                                                 :method :get
                                                                                 :parameters (list (cons "q" api-ready-location)
-                                                                                                  (cons "APPID" *api-key*)))))
+                                                                                                  (cons "APPID" *api-key*)
+                                                                                                  (cons "units" "metric")))))
          (weather-lisp-information (with-input-from-string (s weather-json-information) (json:decode-json s))))
     (if (eql (cdr (assoc :cod weather-lisp-information)) 200)
         (formatted-weather-data weather-lisp-information)
@@ -44,10 +45,6 @@
             (city (reverse (cdr (reverse location)))))
         (format nil "~{~A~^ ~},~A" city country))
       (format nil "~{~A~}" location)))
-
-(defun weather-query-uri (url location &optional (key *api-key*) (unit "&units=metric"))
-  "Return the URI string for the API query"
-  (format nil "~A?q=~A&APPID=~A~A" url location key unit))
 
 (define-condition weather-error (error)
   ((code :initarg :code :reader weather-error-code)

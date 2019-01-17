@@ -10,7 +10,7 @@
   (:export "MAIN"))
 (in-package :photter)
 
-(defparameter *version* "0.0.1")
+(defparameter *version* "0.1.0")
 (defvar *nick* "photter")
 (defvar *server* "irc.freenode.net")
 (defvar *channel* "#iron-bottest-room")
@@ -20,7 +20,7 @@
   (format nil "I am a Common Lisp IRC BOT maintained by st_iron. Use .help for command info."))
 
 (defparameter help-text
-    "Available commands: .weather <city> [<ISO 3166 two-digit country code>]")
+    "Available commands: .weather <city> [<ISO 3166 two-digit country code> | <full state/province name>]")
 
 (defun say-to-channel (say)
   (irc:privmsg *connection* *channel* (princ-to-string say)))
@@ -44,12 +44,12 @@
                ;; Send the answer in private message
                (say-to-private (current-weather-information (cdr (process-message-params arguments))) msg-src)
                ;; Else message to the channel
-               (say-to-channel (formatted-weather-data (weather-data (first (rest (process-message-params arguments))))))))
+               (say-to-channel (current-weather-information (cdr (process-message-params arguments))))))
           ;; Show the help text with .help
-          ((string-equal (first (process-message-params arguments)) ".help")
+          ((string-equal (car (process-message-params arguments)) ".help")
            (say-to-channel help-text))
           ;; Show the about text with .about
-          ((string-equal (first (process-message-params arguments)) ".about")
+          ((string-equal (car (process-message-params arguments)) ".about")
            (say-to-channel about-text)))
       (error (err)
         (say-to-channel (format nil "Sorry, I got an error: ~A" err))))))
