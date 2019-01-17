@@ -26,8 +26,10 @@
 (defun current-weather-information (location)
   "Return the current weather information"
   (let* ((api-ready-location (weather-location location))
-         (api-query-uri (weather-query-uri *api-uri* api-ready-location *api-key*))
-         (weather-json-information (babel:octets-to-string (drakma:http-request api-query-uri)))
+         (weather-json-information (babel:octets-to-string (drakma:http-request *api-uri*
+                                                                                :method :get
+                                                                                :parameters (list (cons "q" api-ready-location)
+                                                                                                  (cons "APPID" *api-key*)))))
          (weather-lisp-information (with-input-from-string (s weather-json-information) (json:decode-json s))))
     (if (eql (cdr (assoc :cod weather-lisp-information)) 200)
         (formatted-weather-data weather-lisp-information)
@@ -40,8 +42,8 @@
   (if (> (length location) 1)
       (let ((country (car (reverse location)))
             (city (reverse (cdr (reverse location)))))
-        (format nil "~{~A~^%20~},~A" city country))
-      (format nil "~{~A~^%20~},~A" location nil)))
+        (format nil "~{~A~^ ~},~A" city country))
+      (format nil "~{~A~}" location)))
 
 (defun weather-query-uri (url location &optional (key *api-key*) (unit "&units=metric"))
   "Return the URI string for the API query"
