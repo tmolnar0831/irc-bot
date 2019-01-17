@@ -1,6 +1,6 @@
 # Photter BOT
 
-Photter is az an IRC BOT written in Common Lisp for easy operations and convenience.
+Photter is an IRC BOT written in Common Lisp.
 
 ## BOT commands
 
@@ -8,7 +8,11 @@ Photter is az an IRC BOT written in Common Lisp for easy operations and convenie
 
 The country name only works with the two-digit country codes.
 
-`.weather <city> [<ISO 3166 two-digit country code>]`
+`.weather <city> <ISO 3166 two-digit country code / state/province name>`
+
+Currently with multi word city names the country is a mandatory option.
+
+With single word city names the country code is optional.
 
 ### Getting help
 
@@ -20,11 +24,7 @@ The country name only works with the two-digit country codes.
 
 ## Installation
 
-With `quicklisp` the installation is
-
-`(ql:quickload :photter)`
-
-`(photter:main :nick "<botname>" :channel "#<channel-to-join-to>")`
+See in the Wiki.
 
 ## License
 
