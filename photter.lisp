@@ -5,8 +5,7 @@
 (defpackage :photter
   (:use "COMMON-LISP"
         "WEATHER-CHECKER"
-        "API-KEY"
-        "WEB-ECHO")
+        "API-KEY")
   (:export "MAIN"))
 (in-package :photter)
 
