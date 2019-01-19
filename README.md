@@ -1,26 +1,56 @@
 # Photter BOT
 
-Photter is an IRC BOT written in Common Lisp.
+Photter is a small Common Lisp IRC BOT
 
 ## BOT commands
 
-### Checking the current weather for a location
+### .weather
 
-The country name only works with the two-digit country codes.
+This is the main command of the bot. It accepts a single city like
 
-`.weather <city> <ISO 3166 two-digit country code / state/province name>`
+`.weather barcelona`
 
-Currently with multi word city names the country is a mandatory option.
+Or a city name followed by a two digit country code like
 
-With single word city names the country code is optional.
+`.weather madrid es`
 
-### Getting help
+It is possible to use state or province name after the city as well like
 
-`.help`
+`.weather millinocket maine`
 
-### BOT info
+It is also possible to use multi word city names, in this case the country code or state name is **mandatory**.
 
-`.about`
+`.weather smiths falls ontario`
+
+Calling the command without any parameter will trigger the bot to look up the location data in its database for the invoking nickname if it previously set the location data with `.setlocation`.
+
+### .setlocation
+
+Setting the location for a nickname means that the `.weather` command will look up the saved location from a database instead of from its parameters.
+
+Running this command again will update the location setting.
+
+`.setlocation budapest hu`
+
+### .getlocation
+
+This command does not accept any parameters, it returns the saved location for the invoking nickname.
+
+### .remlocation
+
+This command removes the location from the database for the invoking nick name.
+
+### .version
+
+Echoes the BOT version in the channel.
+
+### .about
+
+Echoes the maintainer and BOT name in the channel.
+
+### .help
+
+Echoes a not too useful help information.
 
 ## Installation
 
