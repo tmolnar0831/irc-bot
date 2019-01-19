@@ -38,17 +38,13 @@
         (arguments (last (irc:arguments message)))) ;the rest of the message
     (handler-case
         (cond
-
           ;; In case of .weather command
           ((string-equal (car (process-message-params arguments)) ".weather")
-           (let ((location (get-location msg-src)))
-             ;; If the message is sent to the bot
+           (let* ((location (get-location msg-src))
+                 (response (current-weather-information (or (cdr (process-message-params arguments)) location))))
              (if (string-equal msg-dst *nick*)
-                 ;; Send the answer in private message
-                 (say-to-private (current-weather-information (or (cdr (process-message-params arguments)) location)) msg-src)
-                 ;; Else message to the channel
-                 (say-to-channel (current-weather-information (or (cdr (process-message-params arguments)) location))))))
-
+                 (say-to-private response msg-src)
+                 (say-to-channel response))))
           ;; Add location to the system
           ((string-equal (car (process-message-params arguments)) ".setlocation")
            (add-location msg-src (cdr (process-message-params arguments))))
