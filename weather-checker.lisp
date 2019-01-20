@@ -114,12 +114,22 @@
   "Return the country code"
   (cdr (nth 3 (cdr (assoc :sys data)))))
 
+(defun weather-precipitation (data)
+  "Return the precipitation"
+  (cdr (nth 2 (nth 1 (assoc :weather data)))))
+
+(defun weather-air (data)
+  "Return the air conditions"
+  (cdr (nth 2 (nth 2 (assoc :weather data)))))
+
 (defun formatted-weather-data (data)
   "Return a formatted string as answer"
-  (format nil "~A ~A, ~A°C, wind ~Akm/h, pressure ~AhPa, humidity ~A%"
+  (format nil "~A ~A ~A ~1$°C, wind ~Akm/h, pressure ~AhPa, humidity ~A%~@[, ~A~]"
           (weather-city data)
           (weather-country data)
+          (weather-precipitation data)
           (weather-temperature data)
           (weather-wind data)
           (weather-pressure data)
-          (weather-humidity data)))
+          (weather-humidity data)
+          (weather-air data)))
