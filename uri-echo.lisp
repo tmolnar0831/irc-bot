@@ -13,7 +13,10 @@
   (let ((uris (collect-uris (look-for-uri msg))))
     (if (> (length uris) 0)
         (map 'list #'(lambda (uri)
-                       (find-title-tag (query-uri uri)))
+                       (let* ((full-title (find-title-tag (query-uri uri)))
+                              (remove-first-tag (subseq (nth 0 full-title) 7))
+                              (title (reverse (subseq (reverse remove-first-tag) 8))))
+                         title))
              uris)
         nil)))
 
