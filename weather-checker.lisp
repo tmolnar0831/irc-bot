@@ -124,7 +124,7 @@
 
 (defun formatted-weather-data (data)
   "Return a formatted string as answer"
-  (format nil "~A ~A ~A ~1$°C, wind ~Akm/h, pressure ~AhPa, humidity ~A%~@[, ~A~]"
+  (format nil "~A ~A, ~A, ~1$°C, wind ~Akm/h, pressure ~AhPa, humidity ~A%~@[, ~A~]"
           (weather-city data)
           (weather-country data)
           (weather-precipitation data)
