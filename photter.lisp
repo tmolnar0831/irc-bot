@@ -5,23 +5,21 @@
 (defpackage :photter
   (:use "COMMON-LISP"
         "WEATHER-CHECKER"
+        "URI-ECHO"
         "API-KEY")
   (:export "MAIN"))
 
 (in-package :photter)
 
-(defparameter *version* "0.2.0")
+(defparameter *version* "0.2.1")
 (defvar *nick* "photter")
 (defvar *server* "irc.freenode.net")
 (defvar *channel* "#iron-bottest-room")
 (defvar *connection*)
-
-(defvar version-text
+(defparameter version-text
   (format nil "Version: ~A" *version*))
-(defvar about-text
-  (format nil "I am a Common Lisp IRC BOT maintained by st_iron. Use .help for command info."))
-(defvar help-text
-    "Available commands: .weather <city> [<ISO 3166 two-digit country code> | <full state/province name>]")
+(defparameter help-text
+    "Available commands: .weather <city> [<ISO 3166 two-digit country code> | For US/CA: <full state/province name>], .setlocation <city> [<ISO 3166 two-digit country code> | For US/CA: <full state/province name>], .getlocation, .remlocation")
 
 (defun say-to-channel (say)
   (irc:privmsg *connection* *channel* (princ-to-string say)))
@@ -38,31 +36,23 @@
         (arguments (last (irc:arguments message)))) ;the rest of the message
     (handler-case
         (cond
-          ;; In case of .weather command
           ((string-equal (car (process-message-params arguments)) ".weather")
            (let* ((location (get-location msg-src))
                  (response (current-weather-information (or (cdr (process-message-params arguments)) location))))
              (if (string-equal msg-dst *nick*)
                  (say-to-private response msg-src)
                  (say-to-channel response))))
-          ;; Add location to the system
           ((string-equal (car (process-message-params arguments)) ".setlocation")
            (add-location msg-src (cdr (process-message-params arguments))))
-          ;; Check the location setting
           ((string-equal (car (process-message-params arguments)) ".getlocation")
            (say-to-channel (get-location msg-src)))
-          ;; Remove the saved location setting
           ((string-equal (car (process-message-params arguments)) ".remlocation")
            (rem-location msg-src))
-          ;; Show the help text with .help
           ((string-equal (car (process-message-params arguments)) ".help")
-           (say-to-channel help-text))
-          ;; Show the version info
+           (say-to-private help-text msg-src))
           ((string-equal (car (process-message-params arguments)) ".version")
            (say-to-channel version-text))
-          ;; Show the about text with .about
-          ((string-equal (car (process-message-params arguments)) ".about")
-           (say-to-channel about-text)))
+          (t (say-to-channel (process-message-for-uri-echo (process-message-params arguments)))))
       (error (err)
         (say-to-channel (format nil "Sorry, I got an error: ~A" err))))))
 
