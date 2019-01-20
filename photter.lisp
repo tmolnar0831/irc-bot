@@ -52,7 +52,9 @@
            (say-to-private help-text msg-src))
           ((string-equal (car (process-message-params arguments)) ".version")
            (say-to-channel version-text))
-          (t (say-to-channel (process-message-for-uri-echo (process-message-params arguments)))))
+          (t (let ((response (process-message-for-uri-echo (process-message-params arguments))))
+               (if response
+                   (say-to-channel response)))))
       (error (err)
         (say-to-channel (format nil "Sorry, I got an error: ~A" err))))))
 

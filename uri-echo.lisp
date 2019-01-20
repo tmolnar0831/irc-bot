@@ -14,7 +14,8 @@
     (if (> (length uris) 0)
         (map 'list #'(lambda (uri)
                        (find-title-tag (query-uri uri)))
-             uris))))
+             uris)
+        nil)))
 
 (defun query-uri (uri)
   "Query a URI, return the HTTP response"
