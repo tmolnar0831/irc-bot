@@ -122,9 +122,19 @@
   "Return the air conditions"
   (cdr (nth 2 (nth 2 (assoc :weather data)))))
 
+(defun weather-sunset (data)
+  (multiple-value-bind (second minute hour date month year day daylight-p zone)
+      (decode-universal-time (cdr (nth 6 (assoc :sys data))))
+    (format nil "~A:~A" hour minute)))
+
+(defun weather-sunrise (data)
+  (multiple-value-bind (second minute hour date month year day daylight-p zone)
+      (decode-universal-time (cdr (nth 5 (assoc :sys data))))
+    (format nil "~A:~A" hour minute)))
+
 (defun formatted-weather-data (data)
   "Return a formatted string as answer"
-  (format nil "~A ~A, ~A, ~1$°C, wind ~Akm/h, pressure ~AhPa, humidity ~A%~@[, ~A~]"
+  (format nil "~A ~A, ~A, ~1$°C, wind ~Akm/h, pressure ~AhPa, humidity ~A%~@[, ~A~], sunrise ~A, sunset ~A"
           (weather-city data)
           (weather-country data)
           (weather-precipitation data)
@@ -132,4 +142,6 @@
           (weather-wind data)
           (weather-pressure data)
           (weather-humidity data)
-          (weather-air data)))
+          (weather-air data)
+          (weather-sunrise data)
+          (weather-sunset data)))
