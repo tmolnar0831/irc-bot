@@ -11,7 +11,7 @@
 
 (in-package :photter)
 
-(defparameter *version* "0.2.2")
+(defparameter *version* "0.2.3")
 (defvar *nick* "photter")
 (defvar *server* "irc.freenode.net")
 (defvar *channel* "#iron-bottest-room")
@@ -53,7 +53,7 @@
           ((string-equal (car (process-message-params arguments)) ".version")
            (say-to-channel version-text))
           (t (let ((response (process-message-for-uri-echo (process-message-params arguments))))
-               (if response (say-to-channel response)))))
+               (if (nth 0 response) (say-to-channel (nth 0 response))))))
       (error (err)
         (say-to-channel (format nil "Sorry, I got an error: ~A" err))))))
 

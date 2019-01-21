@@ -13,10 +13,11 @@
   (let ((uris (collect-uris (look-for-uri msg))))
     (if (> (length uris) 0)
         (map 'list #'(lambda (uri)
-                       (let* ((full-title (nth 0 (find-title-tag (query-uri uri))))
-                              (remove-first-tag (subseq full-title 7))
-                              (title (reverse (subseq (reverse remove-first-tag) 8))))
-                         (string-trim '(#\Space #\Tab #\Newline) title)))
+                       (let ((full-title (nth 0 (find-title-tag (query-uri uri)))))
+                         (if full-title
+                             (let* ((remove-first-tag (subseq full-title 7))
+                                    (title (reverse (subseq (reverse remove-first-tag) 8))))
+                               (string-trim '(#\Space #\Tab #\Newline) title)))))
              uris))))
 
 (defun query-uri (uri)
@@ -34,7 +35,7 @@
       (last (map 'list #'(lambda (node)
                            (plump:serialize node nil))
                  (plump:get-elements-by-tag-name (plump:parse uri) "title")))
-      (list "<title>No title data</title>")))
+      nil))
 
 (defun look-for-uri (msg)
   "Search for URIs in the incoming message"
