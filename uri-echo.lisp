@@ -17,21 +17,24 @@
                               (remove-first-tag (subseq full-title 7))
                               (title (reverse (subseq (reverse remove-first-tag) 8))))
                          (string-trim '(#\Space #\Tab #\Newline) title)))
-             uris)
-        nil)))
+             uris))))
 
 (defun query-uri (uri)
   "Query a URI, return the HTTP response"
   (multiple-value-bind (response status headers uri)
       (drakma:http-request uri)
-    (if (= status 200)
-        response)))
+    (if (and (= status 200)
+             (string-equal (cdr (assoc :content-type headers)) "text/html" :end1 9))
+        response
+        nil)))
 
 (defun find-title-tag (uri)
   "Return the title tag from the HTTP response"
-  (last (map 'list #'(lambda (node)
-                       (plump:serialize node nil))
-             (plump:get-elements-by-tag-name (plump:parse uri) "title"))))
+  (if uri
+      (last (map 'list #'(lambda (node)
+                           (plump:serialize node nil))
+                 (plump:get-elements-by-tag-name (plump:parse uri) "title")))
+      (list "<title>No title data</title>")))
 
 (defun look-for-uri (msg)
   "Search for URIs in the incoming message"
