@@ -11,7 +11,7 @@
 
 (in-package :photter)
 
-(defparameter *version* "0.2.1")
+(defparameter *version* "0.2.2")
 (defvar *nick* "photter")
 (defvar *server* "irc.freenode.net")
 (defvar *channel* "#iron-bottest-room")
