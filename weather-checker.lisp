@@ -69,7 +69,7 @@
       (print *location-db* out))))
 
 (defun load-weather-db (filename)
-  "Load the has table from file"
+  "Load the hash table from a file"
   (with-open-file (in filename)
     (with-standard-io-syntax
       (setf *location-db* (read in)))))
@@ -95,7 +95,7 @@
   (rest (assoc :name data)))
 
 (defun weather-temperature (data)
-  "Return the temperature in Celsius"
+  "Return the temperature"
   (rest (nth 1 (assoc :main data))))
 
 (defun weather-pressure (data)
@@ -123,24 +123,25 @@
   (cdr (nth 2 (nth 2 (assoc :weather data)))))
 
 (defun weather-sunset (data)
+  "Return the time of sunset in UTC"
   (multiple-value-bind (second minute hour date month year day daylight-p zone)
       (decode-universal-time (cdr (nth 6 (assoc :sys data))))
     (format nil "~A:~A" hour minute)))
 
 (defun weather-sunrise (data)
+  "Return the time of sunrise in UTC"
   (multiple-value-bind (second minute hour date month year day daylight-p zone)
       (decode-universal-time (cdr (nth 5 (assoc :sys data))))
     (format nil "~A:~A" hour minute)))
 
 (defun formatted-weather-data (data)
-  "Return a formatted string as answer"
-  (format nil "~A ~A, ~A, ~1$°C, wind ~Akm/h, pressure ~AhPa, humidity ~A%~@[, ~A~], sunrise ~A, sunset ~A"
+  "Return a formatted answer string"
+  (format nil "~A ~A, ~A, ~1$°C, wind ~Akm/h, humidity ~A%~@[, ~A~], sunrise ~A, sunset ~A"
           (weather-city data)
           (weather-country data)
           (weather-precipitation data)
           (weather-temperature data)
           (weather-wind data)
-          (weather-pressure data)
           (weather-humidity data)
           (weather-air data)
           (weather-sunrise data)
