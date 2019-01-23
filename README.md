@@ -1,12 +1,12 @@
 # Photter BOT
 
-Photter is a small Common Lisp IRC BOT
+Photter is a small Common Lisp IRC BOT.
 
 ## BOT commands
 
 ### .weather
 
-This is the main command of the bot. It accepts a single city like
+This is the main, currently most useful command of the bot. It accepts a single city name like
 
 `.weather barcelona`
 
@@ -18,43 +18,39 @@ It is possible to use state or province name after the city as well like
 
 `.weather millinocket maine`
 
-It is also possible to use multi word city names, in this case the country code or state name is **mandatory**.
+It is also possible to use multi word city names, in this case the **country code or state name** is **mandatory**.
 
 `.weather smiths falls ontario`
 
-Calling the command without any parameter will trigger the bot to look up the location data in its database for the invoking nickname if it previously set the location data with `.setlocation`.
+Calling the command without any parameter will order the BOT to look up the location data in its database for the invoking nickname if it previously set the location data with `.setlocation`.
 
 ### .setlocation
 
 Setting the location for a nickname means that the `.weather` command will look up the saved location from a database instead of from its parameters.
 
-Running this command again will update the location setting.
+Running this command again will **update** the location setting.
 
 `.setlocation budapest hu`
 
 ### .getlocation
 
-This command does not accept any parameters, it returns the saved location for the invoking nickname.
+This command does not accept any parameters, it returns the saved location for the invoking nickname, echoing in the channel.
 
 ### .remlocation
 
-This command removes the location from the database for the invoking nick name.
+This command removes the location from the database for the invoking nickname.
 
 ### .version
 
 Echoes the BOT version in the channel.
 
-### .about
-
-Echoes the maintainer and BOT name in the channel.
-
 ### .help
 
-Echoes a not too useful help information.
+Echoes a useful help information in private.
 
-## Installation
+## Installation and usage
 
-See in the Wiki.
+See in the [Wiki](https://github.com/tmolnar0831/photter/wiki).
 
 ## License
 
