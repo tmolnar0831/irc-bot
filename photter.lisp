@@ -11,7 +11,7 @@
 
 (in-package :photter)
 
-(defparameter *version* "1.0.2")
+(defparameter *version* "1.1.0")
 (defvar *nick* "photter")
 (defvar *server* "irc.freenode.net")
 (defvar *channel* "#iron-bottest-room")
@@ -60,7 +60,9 @@
   (setf *api-key* (load-api-key "openweathermap"))
   (setf *connection* (irc:connect :nickname *nick* :server *server*))
   (unwind-protect (progn
-                    (irc:join *connection* *channel*)
+                    (if (listp *channel*)
+                        (mapcar #'(lambda (ch) (irc:join *connection* ch)) *channel*)
+                        (irc:join *connection* *channel*))
                     (if (probe-file  *location-file*)
                         (load-weather-db *location-file*))
                     (irc:add-hook *connection* 'irc:irc-privmsg-message 'msg-hook)
