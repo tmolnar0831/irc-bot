@@ -5,14 +5,13 @@
 (defpackage :photter
   (:use "COMMON-LISP"
         "WEATHER-CHECKER"
-        "URI-ECHO"
-        "API-KEY")
+        "URI-ECHO")
   (:export "MAIN"))
 
 (in-package :photter)
 
-(defparameter *version* "1.1.0")
-(defvar *nick* "photter")
+(defparameter *version* "2.0.0")
+(defvar *nick* "photter-dev")
 (defvar *server* "irc.freenode.net")
 (defvar *channel* "#iron-bottest-room")
 (defvar *connection*)
@@ -38,11 +37,12 @@
         (cond
           ((string-equal (car (process-message-params arguments)) ".weather")
            (let* ((location (get-location msg-src))
-                  (response (current-weather-information (or (cdr (process-message-params arguments))
-                                                             location))))
+                  (weather-arguments (or (cdr (process-message-params arguments)) location))
+                  (response (current-weather-information (princ-to-string weather-arguments))))
              (answer response msg-src msg-dst)))
           ((string-equal (car (process-message-params arguments)) ".setlocation")
-           (add-location msg-src (cdr (process-message-params arguments))))
+           (add-location msg-src (cdr (process-message-params arguments)))
+           (answer "Location updated..." msg-src msg-dst))
           ((string-equal (car (process-message-params arguments)) ".getlocation")
            (answer (get-location msg-src) msg-src msg-dst))
           ((string-equal (car (process-message-params arguments)) ".remlocation")
@@ -57,7 +57,6 @@
         (answer (format nil "Sorry, I got an error: ~A" err) msg-src msg-dst)))))
 
 (defun main (&key ((:nick *nick*) *nick*) ((:channel *channel*) *channel*))
-  (setf *api-key* (load-api-key "openweathermap"))
   (setf *connection* (irc:connect :nickname *nick* :server *server*))
   (unwind-protect (progn
                     (if (listp *channel*)
@@ -69,4 +68,4 @@
                     (irc:read-message-loop *connection*))
     (progn
       (save-weather-db *location-file*)
-      (irc:quit *connection*))))
+      (irc:quit *connection* "Mr. Photter says Good Bye!"))))

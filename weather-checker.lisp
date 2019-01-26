@@ -3,9 +3,9 @@
 ;;;; License: MIT
 
 (defpackage :weather-checker
-  (:use "COMMON-LISP")
-  (:export "*API-KEY*"
-           "*LOCATION-FILE*"
+  (:use "COMMON-LISP"
+        "APIXU")
+  (:export "*LOCATION-FILE*"
            "SAVE-WEATHER-DB"
            "LOAD-WEATHER-DB"
            "ADD-LOCATION"
@@ -18,16 +18,6 @@
 
 (in-package :weather-checker)
 
-(defvar *api-uri* "https://api.openweathermap.org/data/2.5/weather"
-  "URL of the OpenWeatherMap API")
-(defvar *api-city* nil
-  "City for the query")
-(defvar *api-country* nil
-  "Country code in ISO 3166 format")
-(defvar *api-units* nil
-  "Metrics for the API response")
-(defvar *api-key* nil
-  "API Key")
 (defvar *location-db* (make-hash-table :test 'equal)
   "Hash table for location data")
 (defvar *location-file* "~/common-lisp/weather-location.db"
@@ -35,18 +25,8 @@
 
 (defun current-weather-information (location)
   "Return the current weather information"
-  (let* ((api-ready-location (weather-location location))
-         (weather-json-information (babel:octets-to-string (drakma:http-request *api-uri*
-                                                                                :method :get
-                                                                                :parameters (list (cons "q" api-ready-location)
-                                                                                                  (cons "APPID" *api-key*)
-                                                                                                  (cons "units" "metric")))))
-         (weather-lisp-information (with-input-from-string (s weather-json-information) (json:decode-json s))))
-    (if (eql (cdr (assoc :cod weather-lisp-information)) 200)
-        (formatted-weather-data weather-lisp-information)
-        (error 'weather-error
-               :code (aget weather-lisp-information :cod)
-               :message (aget weather-lisp-information :message)))))
+  (let ((weather-information (apixu:apixu-query location)))
+    (formatted-weather-data weather-information)))
 
 (defun add-location (nick location)
   "Add a new weather location or modify it"
@@ -74,14 +54,6 @@
     (with-standard-io-syntax
       (setf *location-db* (read in)))))
 
-(defun weather-location (location)
-  "Return the string representation of the location"
-  (if (> (length location) 1)
-      (let ((country (car (reverse location)))
-            (city (reverse (cdr (reverse location)))))
-        (format nil "~{~A~^ ~},~A" city country))
-      (format nil "~{~A~}" location)))
-
 (define-condition weather-error (error)
   ((code :initarg :code :reader weather-error-code)
    (message :initarg :message :reader weather-error-message))
@@ -90,58 +62,16 @@
 
 (defun aget (alist key) (cdr (assoc key alist)))
 
-(defun weather-city (data)
-  "Return the city name"
-  (rest (assoc :name data)))
-
-(defun weather-temperature (data)
-  "Return the temperature"
-  (rest (nth 1 (assoc :main data))))
-
-(defun weather-pressure (data)
-  "Return the pressure in hPa"
-  (rest (nth 2 (assoc :main data))))
-
-(defun weather-humidity (data)
-  "Return the humidity in percentage"
-  (rest (nth 3 (assoc :main data))))
-
-(defun weather-wind (data)
-  "Return the wind in km/h"
-  (rest (nth 1 (assoc :wind data))))
-
-(defun weather-country (data)
-  "Return the country code"
-  (cdr (nth 3 (cdr (assoc :sys data)))))
-
-(defun weather-precipitation (data)
-  "Return the precipitation"
-  (cdr (nth 2 (nth 1 (assoc :weather data)))))
-
-(defun weather-air (data)
-  "Return the air conditions"
-  (cdr (nth 2 (nth 2 (assoc :weather data)))))
-
-(defun weather-sunset (data)
-  "Return the time of sunset in UTC"
-  (multiple-value-bind (second minute hour date month year day daylight-p zone)
-      (decode-universal-time (cdr (nth 6 (assoc :sys data))))
-    (format nil "~A:~A" hour minute)))
-
-(defun weather-sunrise (data)
-  "Return the time of sunrise in UTC"
-  (multiple-value-bind (second minute hour date month year day daylight-p zone)
-      (decode-universal-time (cdr (nth 5 (assoc :sys data))))
-    (format nil "~A:~A" hour minute)))
-
 (defun formatted-weather-data (data)
   "Return a formatted answer string"
-  (format nil "~A ~A, ~A,~@[ ~A,~] ~1$°C, wind ~Akm/h, humidity ~A%"
-          (weather-city data)
-          (weather-country data)
-          (weather-precipitation data)
-          (weather-air data)
-          (weather-temperature data)
-          (weather-wind data)
-          (weather-humidity data)))
-
+  (format nil "~A, ~A, ~A, ~A°C, feels like ~A°C, wind ~Akph ~A, precipitation ~Amm, humidity ~A%, UV ~A"
+          (aget (aget data :location) :name)
+          (aget (aget data :location) :country)
+          (aget (aget (aget data :current) :condition) :text)
+          (aget (aget data :current) :temp--c)
+          (aget (aget data :current) :feelslike--c)
+          (aget (aget data :current) :wind--kph)
+          (aget (aget data :current) :wind--dir)
+          (aget (aget data :current) :precip--mm)
+          (aget (aget data :current) :humidity)
+          (aget (aget data :current) :uv)))

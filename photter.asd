@@ -1,11 +1,15 @@
 (asdf:defsystem "photter"
   :description "Photter IRC BOT"
   :author "Tamas Molnar"
-  :version "1.1.0"
+  :version "2.0.0"
   :license "MIT"
-  :depends-on ("cl-irc" "split-sequence" "drakma" "cl-json" "plump")
-  :components ((:file "api-key")
-               (:file "uri-echo")
-               (:file "weather-checker" :depends-on ("api-key"))
+  :depends-on ("cl-irc"
+               "split-sequence"
+               "drakma"
+               "cl-json"
+               "plump"
+               "apixu")
+  :components ((:file "uri-echo")
+               (:file "weather-checker")
                (:file "photter":depends-on ("weather-checker" "uri-echo")))
   #+asdf-unicode :encoding #+asdf-unicode :utf-8)
