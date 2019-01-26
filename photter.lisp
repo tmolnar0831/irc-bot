@@ -10,7 +10,7 @@
 
 (in-package :photter)
 
-(defparameter *version* "2.0.0")
+(defparameter *version* "2.0.1")
 (defvar *nick* "photter-dev")
 (defvar *server* "irc.freenode.net")
 (defvar *channel* "#iron-bottest-room")
@@ -41,8 +41,11 @@
                   (response (current-weather-information (princ-to-string weather-arguments))))
              (answer response msg-src msg-dst)))
           ((string-equal (car (process-message-params arguments)) ".setlocation")
-           (add-location msg-src (cdr (process-message-params arguments)))
-           (answer "Location updated..." msg-src msg-dst))
+           (if (cdr (process-message-params arguments))
+               (progn
+                 (add-location msg-src (cdr (process-message-params arguments)))
+                 (answer (get-location msg-src) msg-src msg-dst))
+               (answer ".setlocation <city, country|province|state>" msg-src msg-dst)))
           ((string-equal (car (process-message-params arguments)) ".getlocation")
            (answer (get-location msg-src) msg-src msg-dst))
           ((string-equal (car (process-message-params arguments)) ".remlocation")
