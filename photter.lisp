@@ -18,7 +18,7 @@
 (defparameter version-text
   (format nil "Version: ~A" *version*))
 (defparameter help-text
-    "Available commands: .weather <city> [<ISO 3166 two-digit country code> | For US/CA: <full state/province name>], .setlocation <city> [<ISO 3166 two-digit country code> | For US/CA: <full state/province name>], .getlocation, .remlocation")
+    "Available commands: .weather <city> [<country> | For US/CA: <state/province>], .setlocation <city> [<country> | For US/CA: <state/province>], .getlocation, .remlocation, .version")
 
 (defun answer (answer source destination)
   "General function for sending messages"
