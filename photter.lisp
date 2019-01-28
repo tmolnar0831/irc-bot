@@ -10,7 +10,7 @@
 
 (in-package :photter)
 
-(defparameter *version* "2.0.1")
+(defparameter *version* "2.0.2")
 (defvar *nick* "photter-dev")
 (defvar *server* "irc.freenode.net")
 (defvar *channel* "#iron-bottest-room")
@@ -22,9 +22,10 @@
 
 (defun answer (answer source destination)
   "General function for sending messages"
-  (if (string-equal destination *nick*) 
-      (irc:privmsg *connection* source (princ-to-string answer))
-      (irc:privmsg *connection* destination (princ-to-string answer))))
+  (let ((text (cl-ppcre:regex-replace-all "(\\n)" answer " ")))
+    (if (string-equal destination *nick*)
+        (irc:privmsg *connection* source text)
+        (irc:privmsg *connection* destination text))))
 
 (defun process-message-params (message)
   (split-sequence:split-sequence #\Space (first message)))

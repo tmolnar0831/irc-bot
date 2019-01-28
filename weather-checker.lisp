@@ -64,8 +64,9 @@
 
 (defun formatted-weather-data (data)
   "Return a formatted answer string"
-  (format nil "~A, ~A, ~A, ~A°C, feels like ~A°C, wind ~Akph ~A, precipitation ~Amm, humidity ~A%, UV ~A"
+  (format nil "~A, ~A, ~A, ~A, ~A°C, feels like ~A°C, wind ~Akph ~A, precipitation ~Amm, humidity ~A%, UV ~A"
           (aget (aget data :location) :name)
+          (aget (aget data :location) :region)
           (aget (aget data :location) :country)
           (aget (aget (aget data :current) :condition) :text)
           (aget (aget data :current) :temp--c)
