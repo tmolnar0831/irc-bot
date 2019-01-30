@@ -64,15 +64,27 @@
 
 (defun formatted-weather-data (data)
   "Return a formatted answer string"
-  (format nil "~A, ~A, ~A, ~A, ~A°C, feels like ~A°C, wind ~Akph ~A, precipitation ~Amm, humidity ~A%, UV ~A"
-          (aget (aget data :location) :name)
-          (aget (aget data :location) :region)
-          (aget (aget data :location) :country)
-          (aget (aget (aget data :current) :condition) :text)
-          (aget (aget data :current) :temp--c)
-          (aget (aget data :current) :feelslike--c)
-          (aget (aget data :current) :wind--kph)
-          (aget (aget data :current) :wind--dir)
-          (aget (aget data :current) :precip--mm)
-          (aget (aget data :current) :humidity)
-          (aget (aget data :current) :uv)))
+  (let ((city (aget (aget data :location) :name))
+        (region (aget (aget data :location) :region))
+        (country (aget (aget data :location) :country))
+        (condition (aget (aget (aget data :current) :condition) :text))
+        (temp (aget (aget data :current) :temp--c))
+        (feels-like (aget (aget data :current) :feelslike--c))
+        (wind (aget (aget data :current) :wind--kph))
+        (wind-dir (aget (aget data :current) :wind--dir))
+        (precipitation (aget (aget data :current) :precip--mm))
+        (humidity (aget (aget data :current) :humidity))
+        (uv (aget (aget data :current) :uv)))
+        
+    (format nil "~A, ~A, ~A, ~A, ~A°C~@[, feels like ~A°C~]~@[, wind ~Akph~]~@[ ~A~]~@[, precipitation ~Amm~], humidity ~A%~@[, UV ~A~]"
+            city
+            region
+            country
+            condition
+            temp
+            (if (= feels-like temp) nil feels-like)
+            (if (= wind 0) nil wind)
+            (if (= wind 0) nil wind-dir)
+            (if (= precipitation 0) nil precipitation)
+            humidity
+            (if (= uv 0) nil uv))))
