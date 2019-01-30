@@ -76,15 +76,15 @@
         (humidity (aget (aget data :current) :humidity))
         (uv (aget (aget data :current) :uv)))
         
-    (format nil "~A, ~A, ~A, ~A, ~A°C~@[, feels like ~A°C~]~@[, wind ~Akph~]~@[ ~A~]~@[, precipitation ~Amm~], humidity ~A%~@[, UV ~A~]"
+    (format nil "~A, ~A, ~A, ~A, ~A°C~@[, feels like ~A°C~], wind ~Akph ~A~@[, precipitation ~Amm~], humidity ~A%~@[, UV ~A~]"
             city
             region
             country
             condition
             temp
             (if (= feels-like temp) nil feels-like)
-            (if (= wind 0) nil wind)
-            (if (= wind 0) nil wind-dir)
+            wind
+            wind-dir
             (if (= precipitation 0) nil precipitation)
             humidity
             (if (= uv 0) nil uv))))
