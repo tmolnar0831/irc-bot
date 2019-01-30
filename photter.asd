@@ -1,7 +1,7 @@
 (asdf:defsystem "photter"
   :description "Photter IRC BOT"
   :author "Tamas Molnar"
-  :version "2.0.2"
+  :version "2.0.3"
   :license "MIT"
   :depends-on ("cl-irc"
                "cl-ppcre"
