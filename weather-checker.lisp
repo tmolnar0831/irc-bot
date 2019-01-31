@@ -76,7 +76,7 @@
         (humidity (aget (aget data :current) :humidity))
         (uv (aget (aget data :current) :uv)))
         
-    (format nil "~A, ~A, ~A, ~A, ~A°C~@[, feels like ~A°C~], wind ~Akph ~A~@[, precipitation ~Amm~], humidity ~A%~@[, UV ~A~]"
+    (format nil "~A, ~A, ~A, ~A, ~A°C~@[, feels like ~A°C~], wind ~A kph ~A~@[, precipitation ~Amm~], humidity ~A%~@[, UV ~A~]"
             city
             region
             country
