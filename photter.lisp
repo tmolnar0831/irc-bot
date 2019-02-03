@@ -10,7 +10,7 @@
 
 (in-package :photter)
 
-(defparameter *version* "2.0.5")
+(defparameter *version* "2.1.0")
 (defvar *nick* "photter-dev")
 (defvar *server* "irc.freenode.net")
 (defvar *channel* "#iron-bottest-room")
@@ -60,9 +60,16 @@
       (error (err)
         (answer (format nil "Sorry, I got an error: ~A" err) msg-src msg-dst)))))
 
-(defun main (&key ((:nick *nick*) *nick*) ((:channel *channel*) *channel*))
+(defun main (&key ((:nick *nick*) *nick*)
+               ((:channel *channel*) *channel*)
+               password)
   (setf *connection* (irc:connect :nickname *nick* :server *server*))
   (unwind-protect (progn
+                    (if password
+                        ;; Freenode specific authentication process
+                        ;; https://tools.ietf.org/html/rfc2812#section-3.1.1 does not work
+                        (let ((authstring (format nil "identify ~A" password)))
+                          (irc:privmsg *connection* "NickServ" authstring)))
                     (if (listp *channel*)
                         (mapcar #'(lambda (ch) (irc:join *connection* ch)) *channel*)
                         (irc:join *connection* *channel*))
@@ -72,4 +79,4 @@
                     (irc:read-message-loop *connection*))
     (progn
       (save-weather-db *location-file*)
-      (irc:quit *connection* "Mr. Photter says Good Bye!"))))
+      (irc:quit *connection* "Good Bye!"))))
