@@ -12,6 +12,7 @@
            "GET-LOCATION"
            "REM-LOCATION"
            "CURRENT-WEATHER-INFORMATION"
+           "DISPLAY-WEATHER-INFO"
            "WEATHER-ERROR"
            "WEATHER-ERROR-CODE"
            "WEATHER-ERROR-MESSAGE"))
@@ -61,6 +62,15 @@
              (write-string (weather-error-message condition) stream))))
 
 (defun aget (alist key) (cdr (assoc key alist)))
+
+(defun display-weather-info (nick args)
+  "Query the location DB and/or use the arguments"
+  (let ((nick-location (get-location nick))
+        (response nil))
+    (cond (args (setq response (current-weather-information (princ-to-string args))))
+          ((eql nick-location nil) (setq response "First set your location with .setlocation!"))
+          (t (setq response (current-weather-information (princ-to-string nick-location)))))
+    response))
 
 (defun formatted-weather-data (data)
   "Return a formatted answer string"

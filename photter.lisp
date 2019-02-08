@@ -10,10 +10,10 @@
 
 (in-package :photter)
 
-(defparameter *version* "2.1.0")
-(defvar *nick* "photter-dev")
+(defparameter *version* "2.1.1")
+(defvar *nick* "photter")
 (defvar *server* "irc.freenode.net")
-(defvar *channel* "#iron-bottest-room")
+(defvar *channel* nil)
 (defvar *connection*)
 (defparameter version-text
   (format nil "Version: ~A" *version*))
@@ -37,10 +37,7 @@
     (handler-case
         (cond
           ((string-equal (car (process-message-params arguments)) ".weather")
-           (let* ((location (get-location msg-src))
-                  (weather-arguments (or (cdr (process-message-params arguments)) location))
-                  (response (current-weather-information (princ-to-string weather-arguments))))
-             (answer response msg-src msg-dst)))
+           (answer (display-weather-info msg-src (cdr (process-message-params arguments))) msg-src msg-dst))
           ((string-equal (car (process-message-params arguments)) ".setlocation")
            (if (cdr (process-message-params arguments))
                (progn
