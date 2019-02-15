@@ -8,6 +8,14 @@
 
 (in-package :uri-echo)
 
+(defun decode-html-entities (txt)
+  "Decode the HTML entities in a text"
+  (let* ((quot (cl-ppcre:regex-replace-all "\&quot;" txt "\"" :preserve-case t))
+         (amp (cl-ppcre:regex-replace-all "\&amp;" quot "&" :preserve-case t))
+         (lt (cl-ppcre:regex-replace-all "\&lt;" amp "<" :preserve-case t))
+         (decoded-html (cl-ppcre:regex-replace-all "\&gt;" lt ">" :preserve-case t)))
+    decoded-html))
+
 (defun process-message-for-uri-echo (msg)
   "Main input for Photter to check if there is an URI in the message"
   (let ((uris (collect-uris (look-for-uri msg))))
@@ -17,7 +25,8 @@
                          (if full-title
                              (let* ((remove-first-tag (subseq full-title 7))
                                     (title (reverse (subseq (reverse remove-first-tag) 8))))
-                               (string-trim '(#\Space #\Tab #\Newline) title)))))
+                               (string-trim '(#\Space #\Tab #\Newline) title)
+                               (decode-html-entities title)))))
              uris))))
 
 (defun query-uri (uri)
