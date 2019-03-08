@@ -32,10 +32,10 @@
 (defun query-uri (uri)
   "Query a URI, return the HTTP response"
   (multiple-value-bind (response status headers uri)
-      (drakma:http-request uri)
+      (drakma:http-request uri :force-binary t)
     (if (and (= status 200)
              (string-equal (cdr (assoc :content-type headers)) "text/html" :end1 9))
-        response
+        (flexi-streams:octets-to-string response)
         nil)))
 
 (defun find-title-tag (uri)
