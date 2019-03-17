@@ -24,10 +24,11 @@
                        (let ((full-title (nth 0 (find-title-tag (query-uri uri)))))
                          (if full-title
                              (let* ((remove-first-tag (subseq full-title 7))
-                                    (title (reverse (subseq (reverse remove-first-tag) 8))))
-                               (string-trim '(#\Space #\Tab #\Newline) title)
-                               (decode-html-entities title)))))
-             uris))))
+                                    (title (reverse (subseq (reverse remove-first-tag) 8)))
+                                    (title-left-trim (string-left-trim '(#\Space #\Tab #\Newline) title))
+                                    (title-decoded-html (decode-html-entities title-left-trim)))
+                               title-decoded-html))))
+                       uris))))
 
 (defun query-uri (uri)
   "Query a URI, return the HTTP response"
