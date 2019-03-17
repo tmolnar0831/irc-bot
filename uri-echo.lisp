@@ -35,7 +35,7 @@
       (drakma:http-request uri :force-binary t)
     (if (and (= status 200)
              (string-equal (cdr (assoc :content-type headers)) "text/html" :end1 9))
-        (flexi-streams:octets-to-string response)
+        (flexi-streams:octets-to-string response :external-format :utf-8)
         nil)))
 
 (defun find-title-tag (uri)

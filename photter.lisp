@@ -10,7 +10,7 @@
 
 (in-package :photter)
 
-(defparameter *version* "2.1.3")
+(defparameter *version* "2.1.4")
 (defvar *nick* "photter")
 (defvar *server* "irc.freenode.net")
 (defvar *channel* nil)
