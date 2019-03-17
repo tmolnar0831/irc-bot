@@ -10,13 +10,13 @@
 
 (in-package :photter)
 
-(defparameter *version* "2.1.4")
+(defparameter *version* "2.1.5")
+(defparameter version-text
+  (format nil "Version: ~A" *version*))
 (defvar *nick* "photter")
 (defvar *server* "irc.freenode.net")
 (defvar *channel* nil)
 (defvar *connection*)
-(defparameter version-text
-  (format nil "Version: ~A" *version*))
 (defparameter help-text
     "Available commands: .weather <city> [<country> | For US/CA: <state/province>], .setlocation <city> [<country> | For US/CA: <state/province>], .getlocation, .remlocation, .version")
 
