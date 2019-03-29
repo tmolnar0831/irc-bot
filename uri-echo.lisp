@@ -8,6 +8,12 @@
 
 (in-package :uri-echo)
 
+(defun check-irc-commands (txt)
+  "Remove the IRC commands from the title"
+  (if (cl-ppcre:scan "QUIT" txt)
+      (cl-ppcre:regex-replace-all "QUIT" txt ",,|,,")
+      txt))
+
 (defun decode-html-entities (txt)
   "Decode the HTML entities in a text"
   (let* ((quot (cl-ppcre:regex-replace-all "\&quot;" txt "\"" :preserve-case t))
@@ -26,8 +32,9 @@
                              (let* ((remove-first-tag (subseq full-title 7))
                                     (title (reverse (subseq (reverse remove-first-tag) 8)))
                                     (title-left-trim (string-left-trim '(#\Space #\Tab #\Newline) title))
-                                    (title-decoded-html (decode-html-entities title-left-trim)))
-                               title-decoded-html))))
+                                    (title-decoded-html (decode-html-entities title-left-trim))
+                                    (text (check-irc-commands title-decoded-html)))
+                               text))))
                        uris))))
 
 (defun query-uri (uri)
