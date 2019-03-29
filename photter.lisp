@@ -10,7 +10,7 @@
 
 (in-package :photter)
 
-(defparameter *version* "2.1.5")
+(defparameter *version* "2.1.6")
 (defparameter version-text
   (format nil "Version: ~A" *version*))
 (defvar *nick* "photter")
